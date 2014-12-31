@@ -1,6 +1,8 @@
+[![Build Status](https://travis-ci.org/npatmaja/SimpleDrawingTool.svg?branch=master)](https://travis-ci.org/npatmaja/SimpleDrawingTool)
+
 A simple drawing tool that was the last coursework of CS5001 class at the University of St Andrews.
 
-*Features:*
+# Features
 - Draw rectangular, elliptical shapes as well as vertical and horizontal lines
 - Import png, jpg and bmp files
 - Save document
