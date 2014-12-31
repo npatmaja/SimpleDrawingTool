@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/npatmaja/SimpleDrawingTool.svg?branch=master)](https://travis-ci.org/npatmaja/SimpleDrawingTool)
 [![Coverage Status](https://img.shields.io/coveralls/npatmaja/SimpleDrawingTool.svg)](https://coveralls.io/r/npatmaja/SimpleDrawingTool?branch=master)
+
 A simple drawing tool that was the last coursework of CS5001 class at the University of St Andrews.
 
 # Features
