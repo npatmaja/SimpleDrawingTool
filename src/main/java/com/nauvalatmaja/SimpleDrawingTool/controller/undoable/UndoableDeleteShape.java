@@ -1,19 +1,13 @@
 package com.nauvalatmaja.SimpleDrawingTool.controller.undoable;
 
-import com.nauvalatmaja.SimpleDrawingTool.model.DrawingDocument;
+import com.nauvalatmaja.SimpleDrawingTool.model.DocumentModel;
 import com.nauvalatmaja.SimpleDrawingTool.model.shape.AbstractDrawingShape;
 
 
-public class UndoableDeleteShape implements UndoableCommand {
-
-	private DrawingDocument document;
-	private AbstractDrawingShape shape;
-	private String action;
+public class UndoableDeleteShape extends AbstractUndoableCommand {
 	
-	public UndoableDeleteShape(DrawingDocument document, AbstractDrawingShape shape, String action) {
-		this.document = document;
-		this.shape = shape;
-		this.action = action;
+	public UndoableDeleteShape(DocumentModel document, AbstractDrawingShape shape, String action) {
+		super(document, shape, action);
 	}
 	
 	@Override

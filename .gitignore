@@ -1,4 +1,5 @@
 target/
+diagrams/
 .DS_Store
 .settings/
 .project

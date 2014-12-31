@@ -11,8 +11,8 @@ import com.nauvalatmaja.SimpleDrawingTool.Properties;
 
 public class DLine extends AbstractDrawingShape {
 	
-	public DLine(String name, double x, double y, double x1, double y1) {
-		super(name, x, y, x1, y1);
+	public DLine(String name, Points points) {
+		super(name, points);
 	}
 
 	@Override

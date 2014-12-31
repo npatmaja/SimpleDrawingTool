@@ -17,12 +17,8 @@ import com.nauvalatmaja.SimpleDrawingTool.Properties;
  */
 public abstract class AbstractDrawingShape implements Shape, Serializable {
 	
-	/** Shape name */
 	private String name;
-	
-	/** X anchor coordinate */
 	private double xAnchor;
-	/** Y anchor coordinate */
 	private double yAnchor;
 	
 	/** X coordinate where bottom-right-most coordinate located */
@@ -30,56 +26,39 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	/** Y coordinate where bottom-right-most coordinate located */
 	private double yEnd;
 	
-	/** Width */
 	private double width;
-	/** Height */
 	private double height;
 	
 	/** Minimum value of x between anchor and end coordinate */
-	protected double xMin;
+	protected double minXValue;
 	/** Minimum value of y between anchor and end coordinate */
-	protected double yMin;
+	protected double minYValue;
 	
 	/** Shape's graphics and color properties */
-	private boolean filled;
-	private boolean drawLine;
-	private int strokeWidth;
-	private Color fillColour;
-	private Color lineColour;
+	private boolean filled = true;
+	private boolean drawLine = true;
 	
-	/** Fill opacity level, default 80% */
-	private float fillOpacity;
-	/** Line opacity level, default 80% */
-	private float lineOpacity;
+	private int strokeWidth = Properties.DEFAULT_STROKE_WIDTH;
+	private Color fillColour = Properties.DEFAULT_FILL_COLOUR;
+	private Color lineColour = Properties.DEFAULT_LINE_COLOUR;
+	private float fillOpacity = Properties.DEFAULT_FILL_OPACITY;
+	private float lineOpacity = Properties.DEFAULT_LINE_OPACITY;
 	
-	/** Flags whether the shape is selected or not */
-	private boolean selected;
+	private boolean selected = false;
 	
 	/** Nodes that appears at the corners of selection line */
 	protected Rectangle2D[] nodes = new Rectangle2D[4];
 	
-	/** Shape is selection rectangle */
-	private boolean selectionRect;
+	private boolean selectionRectangle = false;
+	private boolean square = false;
 	
-	/** Shape side is the same size */
-	private boolean square;
-	
-	public AbstractDrawingShape(String name, double x, double y, double x1, double y1) {
-		this.setxAnchor(x);
-		this.setyAnchor(y);
-		this.setxEnd(x1);
-		this.setyEnd(y1);
-		this.setFilled(true);
-		this.lineColour = Properties.DEFAULT_LINE_COLOUR;
-		this.fillColour = Properties.DEFAULT_FILL_COLOUR;
-		this.fillOpacity = Properties.DEFAULT_FILL_OPACITY;
-		this.lineOpacity = Properties.DEFAULT_LINE_OPACITY;
-		this.strokeWidth = Properties.DEFAULT_STROKE_WIDTH;
-		this.drawLine = true;
+	public AbstractDrawingShape(String name, Points points) {
+		this.xAnchor = points.getXStart();
+		this.yAnchor = points.getYStart();
+		this.xEnd = points.getXEnd();
+		this.yEnd = points.getYEnd();
 		this.name = name;
-		this.selected = false;
-		this.setSquare(false);
-		this.setSelectionRect(false);
+		
 		// define edges
 		createNodes();
 	}
@@ -194,7 +173,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @return the x
 	 */
 	public double getX() {
-		return xMin;
+		return minXValue;
 	}
 
 	/**
@@ -208,7 +187,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @return the y
 	 */
 	public double getY() {
-		return yMin;
+		return minYValue;
 	}
 	
 	/**
@@ -246,11 +225,11 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @return the selectionRect
 	 */
 	public boolean isSelectionRect() {
-		return selectionRect;
+		return selectionRectangle;
 	}
 
 	/**
-	 * Releases the shape from selection
+	 * Releases the shape from the selection
 	 */
 	public void release() {
 		selected = false;
@@ -352,7 +331,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @param selectionRect the selectionRect to set
 	 */
 	public void setSelectionRect(boolean selectionRect) {
-		this.selectionRect = selectionRect;
+		this.selectionRectangle = selectionRect;
 	}
 
 	/**
@@ -383,7 +362,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @param x the x to set
 	 */
 	public void setX(double x) {
-		this.xMin = x;
+		this.minXValue = x;
 	}
 	
 	/**
@@ -397,7 +376,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 * @param y the y to set
 	 */
 	public void setY(double y) {
-		this.xMin = y;
+		this.minXValue = y;
 	}
 
 	/**
@@ -497,7 +476,7 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 		setWidth(width);
 		setHeight(height);
 		setX(Math.min(getxAnchor(), getxEnd()));
-		yMin = Math.min(getyAnchor(), getyEnd());
+		minYValue = Math.min(getyAnchor(), getyEnd());
 	}
 
 	/**

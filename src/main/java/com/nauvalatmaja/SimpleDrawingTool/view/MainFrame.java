@@ -695,6 +695,14 @@ public class MainFrame extends JFrame implements Observer {
 	public Rectangle2D getCanvasBound() {
 		return canvas.getBounds();
 	}
+	
+	public double getCanvasWidth() {
+		return getCanvasBound().getWidth();
+	}
+	
+	public double getCanvasHeight() {
+		return getCanvasBound().getHeight();
+	}
 
 	/**
 	 * Shows file chooser dialog box

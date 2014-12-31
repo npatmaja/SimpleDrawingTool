@@ -1,21 +1,20 @@
 package com.nauvalatmaja.SimpleDrawingTool.model.shape;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.junit.Test;
 
-public class DRectangleTest {
-	
-	private DRectangle classUnderTest = new DRectangle("Test", new Points(0, 0, 100, 100));
+public class DEllipseTest {
+
+	private DEllipse classUnderTest = new DEllipse("Test", new Points(0, 0, 100, 100));
 
 	@Test
 	public void testContainsDoubleDouble() {
-		double x = 10, y = 10;
+		double x = 50, y = 10;
 		boolean result = classUnderTest.contains(x, y);
 		assertThat(result, is(true));
 	}
@@ -29,7 +28,7 @@ public class DRectangleTest {
 	
 	@Test
 	public void testContainsPoint2D() {
-		boolean result = classUnderTest.contains(createPoint2D(10, 10));
+		boolean result = classUnderTest.contains(createPoint2D(50, 10));
 		assertThat(result, is(true));
 	}
 	
@@ -41,7 +40,7 @@ public class DRectangleTest {
 
 	@Test
 	public void testIntersectsDoubleDoubleDoubleDouble() {
-		boolean result = classUnderTest.intersects(90, 90, 200, 200);
+		boolean result = classUnderTest.intersects(50, 50, 200, 200);
 		assertThat(result, is(true));
 	}
 	
@@ -53,7 +52,7 @@ public class DRectangleTest {
 
 	@Test
 	public void testIntersectsRectangle2D() {
-		boolean result = classUnderTest.intersects(createRectangle2D(90, 90, 120, 120));
+		boolean result = classUnderTest.intersects(createRectangle2D(50, 50, 20, 10));
 		assertThat(result, is(true));
 	}
 	
@@ -65,7 +64,7 @@ public class DRectangleTest {
 
 	@Test
 	public void testContainsDoubleDoubleDoubleDouble() {
-		boolean result = classUnderTest.contains(10, 10, 80, 20);
+		boolean result = classUnderTest.contains(40, 40, 10, 10);
 		assertThat(result, is(true));
 	}
 	
@@ -77,7 +76,7 @@ public class DRectangleTest {
 
 	@Test
 	public void testContainsRectangle2D() {
-		boolean result = classUnderTest.contains(createRectangle2D(10, 10, 50, 50));
+		boolean result = classUnderTest.contains(createRectangle2D(40, 40, 20, 20));
 		assertThat(result, is(true));
 	}
 	

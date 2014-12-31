@@ -4,57 +4,57 @@ package com.nauvalatmaja.SimpleDrawingTool.model.shape;
  * Represents top left corner point and bottom right corner point
  * in a rectangular form.
  * 
- * (x,Y)
+ * (xStart,YStart)
  * 	*----------
  * 	|		  |
  * 	|_________*
- * 			(x1, y1)
+ * 			(xEnd, yEnd)
  * 
  * @author nauval
  *
  */
 public class Points {
-	private double x;
-	private double y;
-	private double x1;
-	private double y1;
+	private double xStart;
+	private double yStart;
+	private double xEnd;
+	private double yEnd;
 	
-	public Points(double x, double y, double x1, double y1) {
-		this.x = x;
-		this.y = y;
-		this.x1 = x1;
-		this.y1 = y1;
+	public Points(double xStart, double yStart, double xEnd, double yEnd) {
+		this.xStart = xStart;
+		this.yStart = yStart;
+		this.xEnd = xEnd;
+		this.yEnd = yEnd;
 	}
 
-	public double getX() {
-		return x;
+	public double getXStart() {
+		return xStart;
 	}
 
-	public void setX(double x) {
-		this.x = x;
+	public void setXStart(double x) {
+		this.xStart = x;
 	}
 
-	public double getY() {
-		return y;
+	public double getYStart() {
+		return yStart;
 	}
 
-	public void setY(double y) {
-		this.y = y;
+	public void setYStart(double y) {
+		this.yStart = y;
 	}
 
-	public double getX1() {
-		return x1;
+	public double getXEnd() {
+		return xEnd;
 	}
 
-	public void setX1(double x1) {
-		this.x1 = x1;
+	public void setXEnd(double x1) {
+		this.xEnd = x1;
 	}
 
-	public double getY1() {
-		return y1;
+	public double getYEnd() {
+		return yEnd;
 	}
 
-	public void setY1(double y1) {
-		this.y1 = y1;
+	public void setYEnd(double y1) {
+		this.yEnd = y1;
 	}
 }

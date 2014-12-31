@@ -15,34 +15,45 @@ import com.nauvalatmaja.SimpleDrawingTool.model.shape.*;
  *
  */
 public class DrawingShapeFactory implements ShapeFactory {
+	
+	private static DrawingShapeFactory INSTANCE = null;
+	
+	private DrawingShapeFactory() {}
+	
+	public static DrawingShapeFactory getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new DrawingShapeFactory();
+		}
+		return INSTANCE;
+	}
 
 	@Override
-	public AbstractDrawingShape createShape(ShapeType shape, String name, double x, double y, double x1,
-			double y1) {
+	public AbstractDrawingShape createShape(ShapeType shape, String name, Points points) {
 		switch (shape) {
 		case RECTANGLE:
-			return new DRectangle(name, x, y, x1, y1);
+			return new DRectangle(name, points);
 		case ELLIPSE:
-			return new DEllipse(name, x, y, x1, y1);
+			return new DEllipse(name, points);
 		case LINE:
-			return new DLine(name, x, y, x1, y1);	
+			return new DLine(name, points);	
 		default:
-			return new DRectangle(name, x, y, x1, y1);
+			return new DRectangle(name, points);
 		}
 	}
 
 	@Override
 	public AbstractDrawingShape createShape(ShapeType shape, BufferedImage image,
-			String name, double x, double y, double x1, double y1) throws IOException {
+			String name, Points points) throws IOException {
+		
 		if (shape == ShapeType.IMAGE) {
-			DImage img = new DImage(name, image, x, y, x1, y1); 
+			DImage img = new DImage(name, image, points); 
 			img.setFillOpacity(1);
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", bytes);
 			img.setImageByte(bytes.toByteArray());
 			return img;
 		} else {
-			return createShape(shape, name, x, y, x1, y1);
+			return createShape(shape, name, points);
 		}
 	}
 

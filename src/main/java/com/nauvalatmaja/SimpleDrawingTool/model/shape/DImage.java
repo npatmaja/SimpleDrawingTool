@@ -24,26 +24,24 @@ import javax.imageio.ImageIO;
  */
 public class DImage extends AbstractDrawingShape{
 	
-	/** Byte array of the image */
 	private byte[] imageByte;
-	/** Image */
 	private transient BufferedImage image;
 	
-	public DImage(String name, BufferedImage image, double x, double y, double x1, double y1) {
-		super(name, x, y, x1, y1);
+	public DImage(String name, BufferedImage image, Points points) {
+		super(name, points);
 		this.image = image;
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		updateBounds();
-		return new Rectangle((int) getX(), (int) yMin, (int) getWidth(), (int) getHeight());
+		return new Rectangle((int) getX(), (int) minYValue, (int) getWidth(), (int) getHeight());
 	}
 
 	@Override
 	public Rectangle2D getBounds2D() {
 		updateBounds();
-		return new Rectangle2D.Double(getX(), yMin, getWidth(), getHeight());
+		return new Rectangle2D.Double(getX(), minYValue, getWidth(), getHeight());
 	}
 
 	@Override

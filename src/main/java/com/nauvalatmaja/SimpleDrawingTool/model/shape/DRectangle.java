@@ -13,20 +13,20 @@ import java.awt.geom.Rectangle2D;
  */
 public class DRectangle extends AbstractDrawingShape {
 	
-	public DRectangle(String name, double x, double y, double x1, double y1) {
-		super(name, x, y, x1, y1);
+	public DRectangle(String name, Points points) {
+		super(name, points);
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		updateBounds();
-		return new Rectangle((int) getX(), (int) yMin, (int) getWidth(), (int) getHeight());
+		return new Rectangle((int) getX(), (int) minYValue, (int) getWidth(), (int) getHeight());
 	}
 
 	@Override
 	public Rectangle2D getBounds2D() {
 		updateBounds();
-		return new Rectangle2D.Double(getX(), yMin, getWidth(), getHeight());
+		return new Rectangle2D.Double(getX(), minYValue, getWidth(), getHeight());
 	}
 
 	@Override

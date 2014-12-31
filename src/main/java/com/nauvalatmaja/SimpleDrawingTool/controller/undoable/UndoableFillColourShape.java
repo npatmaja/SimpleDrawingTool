@@ -9,16 +9,14 @@ import com.nauvalatmaja.SimpleDrawingTool.model.shape.AbstractDrawingShape;
  * @author nauval
  *
  */
-public class UndoableFillColourShape implements UndoableCommand {
+public class UndoableFillColourShape extends AbstractUndoableCommand {
 	private Color before;
 	private Color after;
-	private AbstractDrawingShape shape;
-	private String action;
+	
 	public UndoableFillColourShape(AbstractDrawingShape shape, Color newColour, String action) {
-		this.shape = shape;
+		super(null, shape, action);
 		this.before = new Color(shape.getFillColour().getRGB());
 		this.after = newColour;
-		this.action = action;
 	}
 	@Override
 	public void undo() {

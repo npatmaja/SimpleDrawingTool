@@ -19,16 +19,11 @@ import javax.swing.border.MatteBorder;
  */
 public class ButtonColourChooser extends JPanel {
 	
-	/** Default border for colour chooser button */
 	private final Border DEFAULT_BORDER = new MatteBorder(1, 1, 1, 1, (Color) Color.LIGHT_GRAY);
-	/** Pressed border for colour chooser button */
 	private final Border PRESSED_BORDER = new MatteBorder(1, 1, 1, 1, (Color) Color.DARK_GRAY);
-	/** Gap factor */
 	private final double GAP_FACTOR = 0.1;
-	/** Colour */
 	private Color initColour;
 	
-	/** Colour chooser button */
 	private JButton button;
 	
 	/**

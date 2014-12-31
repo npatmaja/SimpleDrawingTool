@@ -21,7 +21,7 @@ public interface ShapeFactory {
 	 * @param y1
 	 * @return new Shape
 	 */
-	public AbstractDrawingShape createShape(ShapeType shape, String name, double x, double y, double x1, double y1);
+	public AbstractDrawingShape createShape(ShapeType shape, String name, Points points);
 	
 	/**
 	 * Create image shape with the specific image parameters
@@ -35,5 +35,5 @@ public interface ShapeFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public AbstractDrawingShape createShape(ShapeType shape, BufferedImage image, String name, double x, double y, double x1, double y1) throws IOException;
+	public AbstractDrawingShape createShape(ShapeType shape, BufferedImage image, String name, Points points) throws IOException;
 }

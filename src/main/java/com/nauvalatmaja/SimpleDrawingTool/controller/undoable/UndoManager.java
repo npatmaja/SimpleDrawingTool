@@ -10,13 +10,20 @@ import java.util.List;
  *
  */
 public class UndoManager {
-	/** Undoable command's list */
+	
 	private List<UndoableCommand> commands;
-	/** Index of the linked list to allow moving forward and backward */
 	private int index;
 	
 	public UndoManager() {
-		commands = new ArrayList<UndoableCommand>();
+		init();
+	}
+	
+	private void init() {
+		if (commands == null) {
+			commands = new ArrayList<UndoableCommand>();
+		} else {
+			commands.clear();
+		}
 		index = -1;
 	}
 	
@@ -35,7 +42,7 @@ public class UndoManager {
 	 * @throws UndoException 
 	 */
 	public String doUndo() throws UndoException {
-		if (undoable()) {
+		if (isUndoable()) {
 			UndoableCommand c = commands.get(index);
 			c.undo();
 			index--;
@@ -50,7 +57,7 @@ public class UndoManager {
 	 * @throws UndoException 
 	 */
 	public String doRedo() throws UndoException {
-		if (redoable()) {
+		if (isRedoable()) {
 			index++;
 			UndoableCommand c = commands.get(index);
 			c.redo();
@@ -60,16 +67,16 @@ public class UndoManager {
 		}
 	}
 	
-	/**
-	 * Returns true if there is command(s) in the list
-	 * @return
-	 */
-	public boolean undoable() {
+	public boolean isUndoable() {
 		return (index >= 0);
 	}
 	
-	public boolean redoable() {
+	public boolean isRedoable() {
 		return (index < commands.size() - 1 && commands.size() > 0);
+	}
+	
+	public void reset() {
+		init();
 	}
 	
 	/**
@@ -82,6 +89,20 @@ public class UndoManager {
 			commands.subList(start, end).clear();
 		}
 	}
-	
-	
+
+	protected List<UndoableCommand> getCommands() {
+		return commands;
+	}
+
+	protected void setCommands(List<UndoableCommand> commands) {
+		this.commands = commands;
+	}
+
+	protected int getIndex() {
+		return index;
+	}
+
+	protected void setIndex(int index) {
+		this.index = index;
+	}
 }

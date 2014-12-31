@@ -10,6 +10,6 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		DocumentModel model = new DrawingDocument();
-		Controller controller = new MainFrameController(model);
+		new MainFrameController(model);
 	}
 }

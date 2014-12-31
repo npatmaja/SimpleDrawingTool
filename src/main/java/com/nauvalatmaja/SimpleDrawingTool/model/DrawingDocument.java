@@ -14,11 +14,8 @@ import com.nauvalatmaja.SimpleDrawingTool.model.shape.AbstractDrawingShape;
 
 
 public class DrawingDocument extends Observable implements DocumentModel, Serializable {
-	/** Mark if there is unsaved changes in the document */
 	private boolean dirty;
-	/** DocumentModel's name */
 	private String name;
-	/** DocumentModel's shapes */
 	private List<AbstractDrawingShape> shapes;
 	
 	public DrawingDocument() {
@@ -44,6 +41,9 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 	 * @param y
 	 */
 	public void translateShape(AbstractDrawingShape shape, double x, double y) {
+		if (doesnotContain(shape)) {
+			return;
+		}
 		shape.setTranslation(x, y);
 		markDirty();
 		update();
@@ -96,7 +96,6 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 	 * @return draw-able shape
 	 */
 	public AbstractDrawingShape getTopShape(Rectangle2D r) {
-		// TODO Auto-generated method stub
 		AbstractDrawingShape shape = null;
 		AbstractDrawingShape s = null;
 		for (int i = shapes.size() - 1; i >= 0; i--) {	
@@ -107,7 +106,6 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 			}
 		}
 		return shape;
-
 	}
 	
 	/**
@@ -160,8 +158,15 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 	 * @param y
 	 */
 	public void scaleShape(AbstractDrawingShape shape, double x, double y) {
+		if (doesnotContain(shape)) {
+			return;
+		}
 		shape.setScale(x, y);
 		markDirty();
+	}
+
+	private boolean doesnotContain(AbstractDrawingShape shape) {
+		return !shapes.contains(shape);
 	}
 
 	/**
@@ -317,8 +322,15 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 		for (AbstractDrawingShape s : shapes) {
 			if (s.isSelected()) {
 				shape = s;
+				break;
 			}
 		}
 		return shape;
+	}
+	
+	public AbstractDrawingShape getShapeInDocument(AbstractDrawingShape shape) {
+		AbstractDrawingShape s = null;
+		int index = shapes.indexOf(shape);
+		return shapes.get(index);
 	}
 }

@@ -1,116 +1,76 @@
 package com.nauvalatmaja.SimpleDrawingTool.controller;
 
+import static com.nauvalatmaja.SimpleDrawingTool.Properties.*;
+
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
-import javax.imageio.ImageIO;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import com.nauvalatmaja.SimpleDrawingTool.Properties;
-import com.nauvalatmaja.SimpleDrawingTool.controller.undoable.*;
+import com.nauvalatmaja.SimpleDrawingTool.Exception.NoFileSelectedException;
+import com.nauvalatmaja.SimpleDrawingTool.controller.undoable.TransformationPoint;
+import com.nauvalatmaja.SimpleDrawingTool.controller.undoable.UndoException;
+import com.nauvalatmaja.SimpleDrawingTool.controller.undoable.UndoManager;
 import com.nauvalatmaja.SimpleDrawingTool.factories.DrawingShapeFactory;
 import com.nauvalatmaja.SimpleDrawingTool.model.DocumentModel;
 import com.nauvalatmaja.SimpleDrawingTool.model.DrawingDocument;
 import com.nauvalatmaja.SimpleDrawingTool.model.shape.AbstractDrawingShape;
+import com.nauvalatmaja.SimpleDrawingTool.model.shape.Points;
 import com.nauvalatmaja.SimpleDrawingTool.model.shape.ShapeType;
 import com.nauvalatmaja.SimpleDrawingTool.view.MainFrame;
 
 
 
 public class MainFrameController implements Controller{
-	/** New document notification message */
 	private static final String NEW_DOC_NOTIFICATION = "New document created";
 	
-	/** Draw rectangle status message */
 	private final String DRAW_RECT_STATUS = "Status: Rectangel tool selected";
-	
-	/** Draw ellipse status message */
 	private final String DRAW_ELLIPSE_STATUS = "Status: Ellipse tool selected";
-	
-	/** Draw line status message */
 	private final String DRAW_LINE_STATUS = "Status: Line tool selected";
-	
-	/** Pan mode status message */
 	private final String PAN_STATUS = "Status: Pan tool selected";
-	
-	/** Scale status message */
 	private final String SCALSE_STATUS = "Status: Scale tool selected";
 	
-	/** Model */
 	private DrawingDocument model;
-	
-	/** View */
 	private MainFrame view;
 	
-	/** Undo manager */
-	private UndoManager undoManager;
+	private boolean scale = false;
+	private boolean pan = false;
+	private boolean addShape = true;
+	private boolean square = false;
 	
-	/** Resize mode */
-	private boolean scale;
-	
-	/** Pan mode */
-	private boolean pan;
-	
-	/** Add shape mode */
-	private boolean addShape;
-	
-	/** Deviation between shape's anchor point and current pointer location */
 	private Point2D.Double offset;
-	
-	/** Start dragging point */
 	private Point2D.Double startDragPosition;
-	
-	/** Current position of the pointer */
 	private Point2D.Double currentPosition;
-	
-	/** Anchor point before transformation */
 	private Point2D.Double anchor1;
-	
-	/** End point before transformation */
 	private Point2D.Double end1;
-	
-	/** Anchor point after transformation */
 	private Point2D.Double anchor2;
-	
-	/** End point after transformation */
 	private Point2D.Double end2;
 	
-	/** Temporary dragged shape */
 	private AbstractDrawingShape draggedShape;
-	
-	/** Current selected shape */
 	private AbstractDrawingShape selectedShape;
-	/** Temporary added shape */
 	private AbstractDrawingShape newShape;
 	
-	/** Shape type, default is rectangle */
-	private ShapeType shapeType;
+	private ShapeType shapeType = ShapeType.RECTANGLE;
+	private String activeDocumentPath = "";
 	
-	/** Current active document name */
-	private String activeDocumentPath;
-	
-	private boolean square;
+	private IOController ioController;
+	private UndoController undoController;
 	
 	public MainFrameController(DocumentModel document) {
-		this.model = (DrawingDocument) document;
-		view = new MainFrame(this, model);
-		shapeType = ShapeType.RECTANGLE;
-		undoManager = new UndoManager();
-		activeDocumentPath = "";
-		square = false;
+		init(document);
 		registerViewToModel();
 		initPoint2D();
 	}
 
+	private void init(DocumentModel document) {
+		this.model = (DrawingDocument) document;
+		
+		view = new MainFrame(this, model);
+		ioController = new IOController(view);
+		undoController = new UndoController(new UndoManager());
+	}
+	
 	/**
 	 * Deletes current selected file and create undo command of the performed action
 	 */
@@ -118,8 +78,7 @@ public class MainFrameController implements Controller{
 		model.releaseShape(model.getSelectedhape());
 		if (selectedShape != null) {
 			model.removeShape(selectedShape);
-			undoManager.putCommand(new UndoableDeleteShape(model, selectedShape, "remove shape"));
-			
+			undoController.deleteShape(model, selectedShape);	
 		}
 		selectedShape = null;
 		newShape = null;
@@ -140,22 +99,14 @@ public class MainFrameController implements Controller{
 		try {
 			// set shapeType to Image
 			shapeType = ShapeType.IMAGE;
+			BufferedImage bi = ioController.openImage();
 			
-			FileFilter filter = new FileNameExtensionFilter("Image files", Properties.ALLOWED_IMAGES_EXTENSION);
-			String filepath = view.showFileChooser("Insert", filter);
-			BufferedImage bi = ImageIO.read(new File(filepath));
+			Points points = createImagePoints(bi);
 			
-			double ratio = calculateImageRatio(bi.getWidth(), view.getCanvasBound().getWidth());
-			double width = bi.getWidth() / ratio;
-			double height = bi.getHeight() / ratio;
+			model.addShape(DrawingShapeFactory.getInstance()
+					.createShape(shapeType, bi, createShapeName(), points));
 			
-			double x = (view.getCanvasBound().getWidth() - width) / 2;
-			double y = (view.getCanvasBound().getHeight() - height) / 2;
-			double x1 = x + width;
-			double y1 = y + height;
-			
-			model.addShape(new DrawingShapeFactory().createShape(shapeType, bi, createShapeName(), x, y, x1, y1));
-			undoManager.putCommand(new UndoableAddShape(model, model.getTopShape(), "add image"));
+			undoController.addShape(model, model.getTopShape());
 			
 			// Set newly created shape as selected shape
 			selectedShape = model.getTopShape();
@@ -164,6 +115,19 @@ public class MainFrameController implements Controller{
 		} catch (IOException e) {
 			view.showErrorDialog(e.getMessage());
 		}
+	}
+
+	private Points createImagePoints(BufferedImage bi) {
+		double ratio = calculateImageRatio(bi.getWidth(), view.getCanvasWidth());
+		double width = bi.getWidth() / ratio;
+		double height = bi.getHeight() / ratio;
+		
+		double x = (view.getCanvasBound().getWidth() - width) / 2;
+		double y = (view.getCanvasBound().getHeight() - height) / 2;
+		double x1 = x + width;
+		double y1 = y + height;
+		
+		return new Points(x, y, x1, y1);
 	}
 	
 	/**
@@ -181,16 +145,7 @@ public class MainFrameController implements Controller{
 	 */
 	public void open() {
 		try {
-			FileFilter filter = new FileNameExtensionFilter("Image files", Properties.FILE_EXTENSION);
-			activeDocumentPath = view.showFileChooser("Open", filter);
-			if (activeDocumentPath.length() <= 0) {
-				return;
-			}
-			activeDocumentPath = getFullPathFilename(activeDocumentPath);
-			
-			ObjectInputStream obj = new ObjectInputStream(new FileInputStream(activeDocumentPath));
-			model = (DrawingDocument) obj.readObject();
-			obj.close();
+			model = ioController.openDocument();
 			
 			registerViewToModel();
 			String name = getFilename(activeDocumentPath);
@@ -199,21 +154,25 @@ public class MainFrameController implements Controller{
 			
 			view.setFooterNotification(name + " opened");
 		} catch (FileNotFoundException e) {
-			view.setFooterNotification("Can not open file:" + e.getMessage());
-			view.showErrorDialog("Can not open file:" + e.getMessage());
+			showErrorOnView("Can not open file:", e);
 		} catch (IOException e) {
-			view.setFooterNotification("Can not open file:" + e.getMessage());
-			view.showErrorDialog("Can not open file:" + e.getMessage());
+			showErrorOnView("Can not open file:", e);
 		} catch (ClassNotFoundException e) {
-			view.setFooterNotification("Can not open file:" + e.getMessage());
-			view.showErrorDialog("Can not open open:" + e.getMessage());
+			showErrorOnView("Can not open file:", e);
+		} catch (NoFileSelectedException e) {
+			// do nothing when no file selected
 		}
+	}
+
+	private void showErrorOnView(String shortDescription, Exception e) {
+		view.setFooterNotification("Can not open file:" + e.getMessage());
+		view.showErrorDialog("Can not open file:" + e.getMessage());
 	}
 	
 	@Override
 	public void redo() {
 		try {
-			view.setFooterNotification("Redo " + undoManager.doRedo());
+			view.setFooterNotification("Redo " + undoController.doRedo());
 			model.markDirty();
 		} catch (UndoException e) {
 			view.setFooterNotification(e.getMessage());
@@ -226,21 +185,9 @@ public class MainFrameController implements Controller{
 	 */
 	public void save() {
 		try {
-			if (activeDocumentPath.length() <= 0) {
-				FileFilter filter = new FileNameExtensionFilter("Image files", Properties.FILE_EXTENSION);
-				activeDocumentPath = view.showFileChooser("Save", filter);
-				if (activeDocumentPath.length() <= 0) {
-					return;
-				}
-				activeDocumentPath = getFullPathFilename(activeDocumentPath);	
-			}
-			String fileName = getFullPathFilename(activeDocumentPath);
-			view.setFooterStatus("Saving " + fileName + "." + Properties.FILE_EXTENSION);
-			
-			ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream(activeDocumentPath));
-			obj.writeObject(model);
-			obj.flush();
-			obj.close();
+			ioController.save(model, activeDocumentPath);
+			String fileName = ioController.getFullPathFilename(activeDocumentPath);
+			view.setFooterStatus("Saving " + fileName + "." + FILE_EXTENSION);
 			
 			model.setName(fileName);
 			model.markClean();
@@ -256,6 +203,8 @@ public class MainFrameController implements Controller{
 		} catch (IOException e) {
 			view.setFooterNotification("Can not save file:" + e.getMessage());
 			view.showErrorDialog("Can not save file:" + e.getMessage());
+		} catch (NoFileSelectedException e) {
+			// do nothing when user cancel the operation
 		} 
 		
 	}
@@ -265,9 +214,9 @@ public class MainFrameController implements Controller{
 	 * @param colour
 	 */
 	public void selectShapeFillColour() {
-		Color colour = view.showColourChooser(Properties.FILL_COLOUR_CHOOSER_TITLE, Properties.DEFAULT_FILL_COLOUR);
+		Color colour = view.showColourChooser(FILL_COLOUR_CHOOSER_TITLE, DEFAULT_FILL_COLOUR);
 		if (selectedShape != null) {
-			undoManager.putCommand(new UndoableFillColourShape(selectedShape, colour, "change colour"));
+			undoController.changeFillColourShape(selectedShape, colour);
 			model.setFillColour(selectedShape, colour);
 		}
 		view.setShapeFillColor(colour);
@@ -278,9 +227,9 @@ public class MainFrameController implements Controller{
 	 * @param colour
 	 */
 	public void selectShapeLineColour() {
-		Color colour = view.showColourChooser(Properties.FILL_COLOUR_CHOOSER_TITLE, Properties.DEFAULT_FILL_COLOUR);
+		Color colour = view.showColourChooser(FILL_COLOUR_CHOOSER_TITLE, DEFAULT_FILL_COLOUR);
 		if (selectedShape != null) {
-			undoManager.putCommand(new UndoableLineColourShape(selectedShape, colour, "change colour"));
+			undoController.changeLineColourShape(selectedShape, colour);
 			model.setLineColour(selectedShape, colour);
 		}
 		view.setShapeLineColor(colour);
@@ -387,7 +336,6 @@ public class MainFrameController implements Controller{
 		// Checks if pointer is pointing on a shape, current active mode and perform accordingly
 		AbstractDrawingShape s = model.getTopShape(currentPosition);
 		startDragPosition = getCurrentPointerPosition();
-		//model.releaseShape(model.getSelectedhape());
 		
 		selectedShape = null;
 		if ((pan || scale) && s != null) {
@@ -436,7 +384,7 @@ public class MainFrameController implements Controller{
 	@Override
 	public void undo() {
 		try {
-			view.setFooterNotification("Undo " + undoManager.doUndo());
+			view.setFooterNotification("Undo " + undoController.doUndo());
 			model.markDirty();
 		} catch (UndoException e) {
 			view.setFooterNotification(e.getMessage());
@@ -473,7 +421,9 @@ public class MainFrameController implements Controller{
 	 * @return rectangle selection
 	 */
 	private AbstractDrawingShape createSelectionRectangle(Point2D.Double point1, Point2D.Double point2) {
-		AbstractDrawingShape shape = new DrawingShapeFactory().createShape(ShapeType.RECTANGLE, createShapeName() , point1.x, point1.y, point2.x, point2.y);
+		Points points = new Points(point1.x, point1.y, point2.x, point2.y);
+		AbstractDrawingShape shape = DrawingShapeFactory.getInstance()
+				.createShape(ShapeType.RECTANGLE, createShapeName() , points);
 		shape.setLineOpacity(0.6f);
 		shape.setFilled(false);
 		shape.setStrokeWidth(2);
@@ -489,7 +439,9 @@ public class MainFrameController implements Controller{
 	 * @return new shape
 	 */
 	private AbstractDrawingShape createShape(Point2D.Double point1, Point2D.Double point2) {
-		AbstractDrawingShape shape = new DrawingShapeFactory().createShape(shapeType, createShapeName() , point1.x, point1.y, point2.x, point2.y);
+		Points points = new Points(point1.x, point1.y, point2.x, point2.y);
+		AbstractDrawingShape shape = DrawingShapeFactory.getInstance()
+				.createShape(shapeType, createShapeName(), points);
 		shape.setFillColour(view.getSelectedFillColor());
 		shape.setFillOpacity(view.getSelectedFillOpacity());
 		shape.setLineColour(view.getSelectedLineColor());
@@ -541,19 +493,6 @@ public class MainFrameController implements Controller{
 	}
 
 	/**
-	 * Gets full path of the filename given including its extension
-	 * @param name
-	 * @return
-	 */
-	private String getFullPathFilename(String name) {
-		if (name.lastIndexOf(".") < 0) {
-			return name + "." + Properties.FILE_EXTENSION;
-		} else {
-			return name;
-		}
-	}
-
-	/**
 	 * Instantiate points
 	 */
 	private void initPoint2D() {
@@ -568,7 +507,7 @@ public class MainFrameController implements Controller{
 	private void registerViewToModel() {
 		model.addObserver(view);
 		view.setModel(model);
-		undoManager = new UndoManager();
+		undoController.clearCommands();
 	};
 	
 	/**
@@ -660,7 +599,7 @@ public class MainFrameController implements Controller{
 		}
 		// Record to undo
 		if (added) {
-			undoManager.putCommand(new UndoableAddShape(model, model.getTopShape(), "add shape"));
+			undoController.addShape(model, model.getTopShape());
 			view.setFooterNotification(model.getTopShape().getName() + " added to canvas");
 			selectedShape = model.getTopShape();
 			model.selectShape(model.getTopShape());
@@ -680,8 +619,8 @@ public class MainFrameController implements Controller{
 		
 		anchor2 = getAnchorFromShape(undoableShape);
 		end2 = getEndPointFromShape(undoableShape);
-		
-		undoManager.putCommand(new UndoableTransformShape(model, undoableShape, anchor1, end1, anchor2, end2));
+		TransformationPoint point = new TransformationPoint(anchor1, end1, anchor2, end2);
+		undoController.trasformShape(model, undoableShape, point);
 		view.setFooterNotification(undoableShape.getName() + action);
 		draggedShape = null;
 		newShape = null;

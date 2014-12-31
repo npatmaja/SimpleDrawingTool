@@ -31,21 +31,14 @@ import com.nauvalatmaja.SimpleDrawingTool.model.shape.ShapeType;
  */
 public class DrawingCanvas extends JComponent {
 	
-	/** Default grid size */
 	private final int DEF_GRID_SIZE = 10;
-	
-	/** Mark print grid*/
 	private boolean showGrid;
-	
-	/** Size of the grid */
 	private int gridSize = DEF_GRID_SIZE;
 	
-	/** List of shapes */
 	private List<AbstractDrawingShape> shapes;
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		// TODO Prints background color, grids and shapes.
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -74,7 +67,8 @@ public class DrawingCanvas extends JComponent {
 	private void drawShape(Graphics2D g2, AbstractDrawingShape s) throws IOException {
 		g2.setStroke(new BasicStroke(s.getStrokeWidth()));
 		
-		// if shape is image then convert byte data stored in the object to BufferedImage then display draw it opaquely
+		// if shape is image then convert byte data stored in the object to 
+		// BufferedImage then display draw it opaquely
 		if (s.getType() == ShapeType.IMAGE) {
 			DImage img = (DImage) s;
 			if (img.getImage() == null) {
@@ -137,7 +131,6 @@ public class DrawingCanvas extends JComponent {
 	
 	@Override
 	public void setBackground(Color bg) {
-		// TODO Auto-generated method stub
 		super.setBackground(bg);
 	}
 	
@@ -156,7 +149,6 @@ public class DrawingCanvas extends JComponent {
 	
 	/** print grid with light gray color */
 	private void printBackgroundGrid(Graphics2D g2) {
-		// TODO Prints lines horizontally and vertically as long as component's width and height
 		g2.setPaint(Color.LIGHT_GRAY);
 		for (int i = 0; i < getWidth(); i += gridSize) {
 			Shape line = new Line2D.Double(i, 0, i, getHeight());
