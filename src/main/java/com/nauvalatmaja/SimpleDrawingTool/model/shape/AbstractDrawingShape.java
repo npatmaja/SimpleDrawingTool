@@ -515,5 +515,11 @@ public abstract class AbstractDrawingShape implements Shape, Serializable {
 	 */
 	public void setSquare(boolean square) {
 		this.square = square;
+		updateBounds();
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s [x:%s y:%s w:%s h:%s]", getType().toString(), getX(), getY(), getWidth(), getHeight());
 	}
 }

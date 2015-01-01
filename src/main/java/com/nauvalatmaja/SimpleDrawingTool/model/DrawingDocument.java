@@ -68,17 +68,7 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 	 * @return draw-able shape
 	 */
 	public AbstractDrawingShape getTopShape(double x, double y) {
-		AbstractDrawingShape shape = null;
-		AbstractDrawingShape s = null;
-		Rectangle2D pointerRectangle = getPointerRectangle(x, y);
-		for (int i = shapes.size() - 1; i >= 0; i--) {	
-			s = shapes.get(i);
-			if (pointerRectangle.intersects(s.getBounds2D()) && !s.isSelectionRect()) {
-				shape = s;
-				break;
-			}
-		}
-		return shape;
+		return getTopShape(getPointerRectangle(x, y));
 	}
 	
 	/**
@@ -100,7 +90,7 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 		AbstractDrawingShape s = null;
 		for (int i = shapes.size() - 1; i >= 0; i--) {	
 			s = shapes.get(i);
-			if (r.contains(s.getBounds2D()) && !s.isSelectionRect()) {
+			if (r.intersects(s.getBounds2D()) && !s.isSelectionRect()) {
 				shape = s;
 				break;
 			}
@@ -329,7 +319,6 @@ public class DrawingDocument extends Observable implements DocumentModel, Serial
 	}
 	
 	public AbstractDrawingShape getShapeInDocument(AbstractDrawingShape shape) {
-		AbstractDrawingShape s = null;
 		int index = shapes.indexOf(shape);
 		return shapes.get(index);
 	}

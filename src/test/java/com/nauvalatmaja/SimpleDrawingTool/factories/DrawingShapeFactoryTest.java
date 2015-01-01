@@ -2,7 +2,6 @@ package com.nauvalatmaja.SimpleDrawingTool.factories;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -43,6 +42,12 @@ public class DrawingShapeFactoryTest {
 		assertThat(shape, instanceOf(DEllipse.class));
 	}
 	
+	@Test
+	public void testCreateShapeShapeTypeStringPointsDefaultCase() {
+		shape = DrawingShapeFactory.getInstance()
+			.createShape(ShapeType.IMAGE, "test", point);
+		assertThat(shape, instanceOf(DRectangle.class));
+	}
 	
 	@Test
 	public void testCreateShapeShapeTypeBufferedImageStringPoints() throws IOException {
@@ -50,5 +55,13 @@ public class DrawingShapeFactoryTest {
 		shape = DrawingShapeFactory.getInstance()
 				.createShape(ShapeType.IMAGE, bi, "test", point);
 			assertThat(shape, instanceOf(DImage.class));
+	}
+	
+	@Test
+	public void testCreateShapeShapeTypeBufferedImageStringPointsNotImage() throws IOException {
+		BufferedImage bi = new BufferedImage(90, 90, BufferedImage.TYPE_INT_RGB);
+		shape = DrawingShapeFactory.getInstance()
+				.createShape(ShapeType.ELLIPSE, bi, "test", point);
+			assertThat(shape, instanceOf(DEllipse.class));
 	}
 }

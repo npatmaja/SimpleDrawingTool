@@ -1,7 +1,8 @@
 package com.nauvalatmaja.SimpleDrawingTool.model.shape;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -9,13 +10,13 @@ import java.awt.geom.Rectangle2D;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DEllipseTest {
+public class DLineTest {
 
-	private DEllipse classUnderTest;
+	private DLine classUnderTest;
 
 	@Before
 	public void setup() {
-		classUnderTest = new DEllipse("Test", new Points(0, 0, 200, 100));
+		classUnderTest = new DLine("Test", new Points(0, 0, 200, 100));
 	}
 	
 	@Test
@@ -94,7 +95,7 @@ public class DEllipseTest {
 	
 	@Test
 	public void testEqualTrue() {
-		DEllipse e = new DEllipse("Test", new Points(0, 0, 100, 100));
+		DLine e = new DLine("Test", new Points(0, 0, 100, 100));
 		assertThat(classUnderTest.equals(e), is(true));
 	}
 	
@@ -112,7 +113,7 @@ public class DEllipseTest {
 	
 	@Test
 	public void testToString() {
-		String string = String.format("ELLIPSE [x:%s y:%s w:%s h:%s]", 
+		String string = String.format("LINE [x:%s y:%s w:%s h:%s]", 
 				classUnderTest.getX(), 
 				classUnderTest.getY(), 
 				classUnderTest.getWidth(), 
@@ -129,5 +130,16 @@ public class DEllipseTest {
 	private Rectangle2D.Double createRectangle2D(double x, double y, double x1, double y1) {
 		Rectangle2D.Double rect = new Rectangle2D.Double(x, y, x1, y1);
 		return rect;
+	}
+
+	@Test
+	public void testPerformTranslation() {
+		classUnderTest.performTranslation(5, 5);
+		double x = 5, y = 5, x1 = 205, y1 = 105;
+		
+		assertThat(classUnderTest.getX(), is(x));
+		assertThat(classUnderTest.getY(), is(y));
+		assertThat(classUnderTest.getxEnd(), is(x1));
+		assertThat(classUnderTest.getyEnd(), is(y1));
 	}
 }

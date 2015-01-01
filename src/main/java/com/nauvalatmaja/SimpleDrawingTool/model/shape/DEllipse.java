@@ -72,11 +72,6 @@ public class DEllipse extends AbstractDrawingShape{
 		updateBounds();
 		return new Ellipse2D.Double(getX(), minYValue, getWidth(), getHeight()).getPathIterator(at, flatness);
 	}
-	
-	@Override
-	public String toString() {
-		return String.format("Ellipse [x:%s y:%s w:%s h:%s]", getBounds().getX(), getBounds().getY(), getBounds().getWidth(), getBounds().getHeight());
-	}
 
 	@Override
 	public ShapeType getType() {

@@ -1,5 +1,7 @@
 package com.nauvalatmaja.SimpleDrawingTool.model.shape;
 
+import static com.nauvalatmaja.SimpleDrawingTool.Properties.*;
+
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -7,7 +9,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import com.nauvalatmaja.SimpleDrawingTool.Properties;
 
 public class DLine extends AbstractDrawingShape {
 	
@@ -67,11 +68,6 @@ public class DLine extends AbstractDrawingShape {
 	}
 	
 	@Override
-	public String toString() {
-		return String.format("Line x:%.2f y:%.2f x1:%.2f y1:%.2f", getxAnchor(), getyAnchor(), getxEnd(), getyEnd());	
-	}
-
-	@Override
 	public ShapeType getType() {
 		return ShapeType.LINE;
 	}	
@@ -92,43 +88,44 @@ public class DLine extends AbstractDrawingShape {
 	}
 	
 	protected void createNodes() {
-		double xNode = getX() - Properties.NODE_SIDE_SIZE;
-		double yNode = getY() - Properties.NODE_SIDE_SIZE;
-		// top left node
-		nodes[0] = new Rectangle2D.Double(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		double xNode = getX() - NODE_SIDE_SIZE;
+		double yNode = getY() - NODE_SIDE_SIZE;
+
+		nodes[0] = new Rectangle2D.Double(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 		
 		// top right node
 		xNode = getBounds().getMaxX();
-		nodes[1] = new Rectangle2D.Double(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[1] = new Rectangle2D.Double(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 	
 		// bottom right node
 		yNode = Math.max(getBounds().getMinY(), getyEnd());
-		nodes[2] = new Rectangle2D.Double(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[2] = new Rectangle2D.Double(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 		
 		// bottom left node
-		xNode = getBounds().getMinX() - Properties.NODE_SIDE_SIZE;
+		xNode = getBounds().getMinX() - NODE_SIDE_SIZE;
 		yNode = Math.max(getBounds().getMinY(), getyEnd());
-		nodes[3] = new Rectangle2D.Double(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[3] = new Rectangle2D.Double(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 
 	}
 	
 	protected void updateNodes() {
-		double xNode = getX() - Properties.NODE_SIDE_SIZE;
-		double yNode = getY() - Properties.NODE_SIDE_SIZE;
+		double xNode = getX() - NODE_SIDE_SIZE;
+		double yNode = getY() - NODE_SIDE_SIZE;
+		
 		// top left node
-		nodes[0].setRect(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[0].setRect(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 		
 		// top right node
 		xNode = getBounds().getMaxX();
-		nodes[1].setRect(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[1].setRect(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 
 		// bottom right node
 		yNode = Math.max(getBounds().getMinY(), getyEnd());
-		nodes[2].setRect(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[2].setRect(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 
 		// bottom left node
-		xNode = getBounds().getMinX() - Properties.NODE_SIDE_SIZE;
+		xNode = getBounds().getMinX() - NODE_SIDE_SIZE;
 		yNode = Math.max(getBounds().getMinY(), getyEnd());
-		nodes[3].setRect(xNode, yNode, Properties.NODE_SIDE_SIZE, Properties.NODE_SIDE_SIZE);
+		nodes[3].setRect(xNode, yNode, NODE_SIDE_SIZE, NODE_SIDE_SIZE);
 	}
 }

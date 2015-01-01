@@ -3,11 +3,12 @@ package com.nauvalatmaja.SimpleDrawingTool.model;
 import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Observer;
 
-import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,11 +20,14 @@ public class DrawingDocumentTest {
 	
 	private DrawingDocument classUnderTest;
 	private AbstractDrawingShape shape;
+	private Observer mockedObserver;
 
 	@Before
 	public void setUp() throws Exception {
+		mockedObserver = mock(Observer.class);
 		shape = new DRectangle("test", new Points(0, 0, 100, 100));
 		classUnderTest = new DrawingDocument();
+		classUnderTest.addObserver(mockedObserver);
 	}
 
 	@Test
@@ -53,6 +57,11 @@ public class DrawingDocumentTest {
 		classUnderTest.addShape(shape);
 		classUnderTest.addShape(s);
 		assertThat(classUnderTest.getTopShape(), is(s));
+	}
+	
+	@Test
+	public void testGetTopShapeNotFound() {
+		assertThat(classUnderTest.getTopShape(), equalTo(null));
 	}
 
 	@Test
@@ -116,11 +125,19 @@ public class DrawingDocumentTest {
 		classUnderTest.releaseShape(shape);
 		assertThat(shape.isSelected(), is(false));
 	}
+	
+	@Test
+	public void testReleaseShapeNull() {
+		classUnderTest.selectShape(null);
+		verify(mockedObserver, never()).update(classUnderTest, null);;
+	}
 
 	@Test
 	public void testGetSelectedhape() {
+		AbstractDrawingShape s = new DRectangle("s", new Points(10, 10, 50, 50));
 		classUnderTest.addShape(shape);
 		classUnderTest.selectShape(shape);
+		classUnderTest.addShape(s);
 		assertThat(classUnderTest.getSelectedhape(), is(shape));
 	}
 

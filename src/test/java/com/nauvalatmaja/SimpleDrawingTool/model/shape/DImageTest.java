@@ -2,20 +2,25 @@ package com.nauvalatmaja.SimpleDrawingTool.model.shape;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class DEllipseTest {
+public class DImageTest {
 
-	private DEllipse classUnderTest;
-
+	private DImage classUnderTest;
+	private BufferedImage mockedBI;
+	
 	@Before
 	public void setup() {
-		classUnderTest = new DEllipse("Test", new Points(0, 0, 200, 100));
+		mockedBI = mock(BufferedImage.class);
+		
+		classUnderTest = new DImage ("Test", mockedBI, new Points(0, 0, 200, 100));
 	}
 	
 	@Test
@@ -94,7 +99,7 @@ public class DEllipseTest {
 	
 	@Test
 	public void testEqualTrue() {
-		DEllipse e = new DEllipse("Test", new Points(0, 0, 100, 100));
+		DImage e = new DImage("Test", mockedBI,new Points(0, 0, 100, 100));
 		assertThat(classUnderTest.equals(e), is(true));
 	}
 	
@@ -112,7 +117,7 @@ public class DEllipseTest {
 	
 	@Test
 	public void testToString() {
-		String string = String.format("ELLIPSE [x:%s y:%s w:%s h:%s]", 
+		String string = String.format("IMAGE [x:%s y:%s w:%s h:%s]", 
 				classUnderTest.getX(), 
 				classUnderTest.getY(), 
 				classUnderTest.getWidth(), 

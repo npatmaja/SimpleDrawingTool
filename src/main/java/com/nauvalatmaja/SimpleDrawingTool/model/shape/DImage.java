@@ -86,10 +86,6 @@ public class DImage extends AbstractDrawingShape{
 		return getBounds().getPathIterator(at, flatness);
 	}
 
-	public String toString() {
-		return String.format("Image x:%s y:%s w:%s h:%s", getBounds().getX(), getBounds().getY(), getBounds().getWidth(), getBounds().getHeight());	
-	}
-
 	@Override
 	public ShapeType getType() {
 		return ShapeType.IMAGE;
